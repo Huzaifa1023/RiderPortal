@@ -1,88 +1,32 @@
-import React from 'react'
-import { View,FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react'
+import { View, FlatList } from 'react-native';
 import Product from '../Components/Product';
+import { baseUrl } from '../Constants/api';
+const AllOrders = () => {
+    const [page, setPage] = useState(1);
+    const [products,setProducts] = useState([]);
+    const getList = async () => {
+        fetch(`${baseUrl}/user/cameraAds?page=${page}&limit=${10}`)
+            .then(res => res.json()).then(data => {
+                setProducts(data)
+            })
+            .catch(err => console.log(err))
+    }
+    const loadMore = ()=> {
+        setPage(page+1);
+    }
 
-const AllOrders = ()=> {
-    const products = [
-        {
-            prodId:1,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:2,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:3,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:4,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:5,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:6,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:7,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:8,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:9,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:10,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:11,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-        {
-            prodId:12,
-            prodImage:require('../Assets/product.png'),
-            prodName:"Product Name",
-            prodPrice:"20$",
-        },
-    ]
-    return(
-        <View style={{flex:1}}>
+    useEffect(() => {
+        getList()
+    }, [getList])
+    return (
+        <View style={{ flex: 1 }}>
             <FlatList
                 data={products}
-                renderItem={({ item }) => <Product prodImage={item.prodImage} prodName={item.prodName} prodPrice={item.prodPrice} />}
-                keyExtractor={prod => prod.prodId}
+                renderItem={({ item }) => <Product prodImage={require('../Assets/product.png')} prodName={item.title} prodPrice={item.price} />}
+                keyExtractor={prod => prod._id}
+                onEndReached={loadMore}
+                onEndReachedThreshold={10}
             />
         </View>
     )
